@@ -5,9 +5,9 @@ requirejs.config({
     }
 });
 
-requirejs(['pixi.min', 'app/main'],
-    function (pixi, main) {
-        var renderer = PIXI.autoDetectRenderer(800, 600, {backgroundColor: 0x232b17});
+requirejs(['pixi.min', 'app/main', 'app/task'],
+    function (pixi, main, task) {
+        var renderer = PIXI.autoDetectRenderer(800, 500, {backgroundColor: 0xDD5D5D5});
         document.body.appendChild(renderer.view);
 
         var stage = new PIXI.Container();
@@ -19,7 +19,7 @@ requirejs(['pixi.min', 'app/main'],
         for (var j = 0; j < 5; j++) {
             var warrior = createWarrior()
             warriors.push(warrior);
-            container.addChild(warrior);
+            container.addChild(warrior.sprite);
         }
         ;
 

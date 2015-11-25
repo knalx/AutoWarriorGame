@@ -1,24 +1,35 @@
 function makeTick(units, tick) {
     if (tick % 10 == 0) {
         for (var i = 0; i < 5; i++) {
-            goToDesiredPosstition(units[i]);
+            var curTask = units[i].tasks[units[i].tasks.length - 1];
+            //console.log(curTask!=null && curTask.type == 'move');
+            if (curTask != null && curTask.type == 'move') {
+                if (goToDesiredPosstition(units[i])) {
+                    units[i].tasks.pop();
+                }
+            }
+
         }
 
     }
 }
 
 function createWarrior() {
-    var warrior = PIXI.Sprite.fromImage('resource/art/warrior_stand.png');
-    warrior.interactive = true;
-    warrior.scale.x = 0.3;
-    warrior.scale.y = 0.3;
-    warrior.on('mousedown', onUnitDown);
-    warrior.on('touchstart', onUnitDown);
-    warrior.x = 40 + getRandom();
-    warrior.y = 40 + getRandom();
+    var sprite = PIXI.Sprite.fromImage('resource/art/warrior_stand.png');
+
+    sprite.interactive = true;
+    sprite.scale.x = 0.3;
+    sprite.scale.y = 0.3;
+    sprite.x = 40 + getRandom();
+    sprite.y = 40 + getRandom();
+
+    var warrior = {sprite: sprite}
 
     warrior.destinationX = 400;
-    warrior.destinationY = 400;
+    warrior.destinationY = 200;
+    warrior.tasks = new Array();
+
+    warrior.tasks.push(createMoveTask(200, 200));
 
     warrior.move = function (x, y) {
         this.destinationX = x;
@@ -27,10 +38,6 @@ function createWarrior() {
     return warrior;
 }
 
-function onUnitDown(eventData) {
-    this.x += getRandomBetween(-10, 10);//  getRandom(-1,100);
-    this.y += getRandomBetween(-10, 10);//  getRandom(-1,100);
-}
 
 function getRandom() {
     var min = 1;
@@ -42,17 +49,25 @@ function getRandomBetween(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-
+//return true wheb u get the destination
 function goToDesiredPosstition(unit) {
-    var r = 5; //speed
-    if (Math.abs(unit.destinationX - unit.x) >= r) {
-        unit.x += r * (unit.destinationY - unit.y) / Math.sqrt(Math.pow((unit.destinationY - unit.y), 2) + Math.pow((unit.destinationX - unit.x), 2));
+    var r = 3; //speed
+    var dx = unit.destinationX - unit.sprite.x;
+    var dy = unit.destinationY - unit.sprite.y;
+
+    if (Math.abs(dx) >= r) {
+        unit.sprite.x += r * (dx) / Math.sqrt(Math.pow(dy, 2) + Math.pow(dx, 2));
     }
-    if (Math.abs(unit.destinationY - unit.y) >= r) {
-        unit.y += r * (unit.destinationX - unit.x) / Math.sqrt(Math.pow((unit.destinationY - unit.y), 2) + Math.pow((unit.destinationX - unit.x), 2));
+    if (Math.abs(dy) >= r) {
+        unit.sprite.y += r * (dy) / Math.sqrt(Math.pow(dy, 2) + Math.pow(dx, 2));
     }
 
-    return true;
+    if (Math.abs(dy) < r || Math.abs(dx) < r) {
+        return true;
+    } else {
+        return false;
+    }
+
 }
 
 function f() {
@@ -67,5 +82,21 @@ function f() {
     }
     if (newy < borderY && newy > 1) {
         units[i].y = newy;
+    }
+}
+
+function createMoveTask(toX, toY) {
+    return task = {
+        type: "move",
+        x: toX,
+        y: toY
+    }
+
+
+}
+function createKillTask(targetID) {
+    return task = {
+        type: "kill",
+        target: targetID
     }
 }
