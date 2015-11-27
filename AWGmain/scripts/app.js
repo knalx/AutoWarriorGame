@@ -7,8 +7,7 @@ requirejs.config({
 
 requirejs(['pixi.min', 'app/main'],
     function (pixi, main) {
-        a = a;
-        var renderer = PIXI.autoDetectRenderer(800, 500, {backgroundColor: 0xDD5D5D5});
+        var renderer = pixi.autoDetectRenderer(800, 500, {backgroundColor: 0xDD5D5D5});
         document.body.appendChild(renderer.view);
 
         var stage = new PIXI.Container();
@@ -16,17 +15,14 @@ requirejs(['pixi.min', 'app/main'],
 
         stage.addChild(container);
 
-        var warriors = new Array();
-        for (var j = 0; j < 5; j++) {
-
-            var warrior = null; // createWarrior()
-
-            warriors.push(warrior);
-            container.addChild(warrior.sprite);
-        }
-        ;
+        var heroes = main.initHeroes();
+        heroes.forEach(function (hero, i) {
+            container.addChild(hero.cont);
+        })
         container.x = 100;
-        container.y = 60;
+        container.y = 100;
+        //container.addChild(addNick());
+
 
         var tick = 0;
 
@@ -34,11 +30,14 @@ requirejs(['pixi.min', 'app/main'],
 
         // start animating
         function animate() {
-            tick += 2;
-            makeTick(warriors, tick);
+            tick += 1;
+            main.makeTick(heroes, tick);
             renderer.render(stage);
             // request another animation frame...
             requestAnimationFrame(animate);
         }
 
+
     });
+
+
