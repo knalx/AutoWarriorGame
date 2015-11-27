@@ -5,8 +5,9 @@ requirejs.config({
     }
 });
 
-requirejs(['pixi.min', 'app/main', 'app/task'],
-    function (pixi, main, task) {
+requirejs(['pixi.min', 'app/main'],
+    function (pixi, main) {
+        a = a;
         var renderer = PIXI.autoDetectRenderer(800, 500, {backgroundColor: 0xDD5D5D5});
         document.body.appendChild(renderer.view);
 
@@ -17,22 +18,21 @@ requirejs(['pixi.min', 'app/main', 'app/task'],
 
         var warriors = new Array();
         for (var j = 0; j < 5; j++) {
-            var warrior = createWarrior()
+
+            var warrior = null; // createWarrior()
+
             warriors.push(warrior);
             container.addChild(warrior.sprite);
         }
         ;
-
-
         container.x = 100;
         container.y = 60;
 
         var tick = 0;
 
-        requestAnimationFrame(animate);
+            requestAnimationFrame(animate);
 
-// start animating
-
+        // start animating
         function animate() {
             tick += 2;
             makeTick(warriors, tick);
