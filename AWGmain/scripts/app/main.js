@@ -68,8 +68,13 @@ define(['pixi.min', 'app/utils', 'app/task', 'app/heroes/warrior'],
             var targetUnit = units[killTask.target];
             // if target close enough
             var range = goToPoint(unit, targetUnit.cont.x, targetUnit.cont.y, speed);
-            if (range <= 3) {
-                return unit.attack(units[killTask.target]);
+            var animationFinished = false;
+            if (range <= unit.stats.atk.range) {
+                animationFinished = unit.attack(targetUnit);
+                if (targetUnit.stats.hp <= 0 && animationFinished) {
+                    unit.death();
+                    return true;
+                }
             }
             return false;
         }

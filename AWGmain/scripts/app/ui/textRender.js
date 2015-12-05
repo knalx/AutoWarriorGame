@@ -14,7 +14,7 @@ define(['pixi.min'], function (pixi) {
         richText.y = -10;
 
         return richText;
-    }
+    };
     return {
         getNick: getNick
     };

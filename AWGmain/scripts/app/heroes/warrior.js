@@ -1,4 +1,4 @@
-define(['pixi.min', 'app/utils', 'app/ui/textRender'], function (pixi, Utils, TextRender) {
+define(['pixi.min', 'app/utils', 'app/ui/textRender', 'app/ui/animationRender'], function (pixi, Utils, TextRender, AnimationRender) {
     var createWarrior = function (n) {
         var container = new PIXI.Container();
         container.x = 40 + Utils.getRandom();
@@ -8,10 +8,13 @@ define(['pixi.min', 'app/utils', 'app/ui/textRender'], function (pixi, Utils, Te
         sprite.interactive = true;
         sprite.scale.x = 0.3;
         sprite.scale.y = 0.3;
+
         container.addChild(sprite);
         var number = n;// Utils.getRandomBetween(100, 200);
         container.addChild(TextRender.getNick('w' + number));
-
+        container.animations = {
+            timer: 0
+        };
         var warrior = {cont: container};
         warrior.id = "w" + number;
 
@@ -20,9 +23,10 @@ define(['pixi.min', 'app/utils', 'app/ui/textRender'], function (pixi, Utils, Te
             mp: 100,
             ms: 3,
             atk: {
-                dmg: 50,
+                dmg: 10,
                 cd: 0,
-                castSpeed: 10
+                atkSpeed: 10,
+                range: 10
             }
         };
         warrior.tasks = new Array();
@@ -35,18 +39,12 @@ define(['pixi.min', 'app/utils', 'app/ui/textRender'], function (pixi, Utils, Te
         warrior.tasks.push(createKillTask('w' + (n + 1)));
 
 
-        //return true if target killed
+        //return true if animation is finished
         warrior.attack = function (unit) {
             if (warrior.stats.atk.cd == 0) {
-                unit.stats.hp -= warrior.stats.atk.dmg;
-                warrior.stats.atk.cd = warrior.stats.atk.castSpeed;
-
-                if (unit.stats.hp <= 0) {
-                    var filter = new PIXI.filters.ColorMatrixFilter();
-                    var matrix = filter.matrix;
-                    var count = 5;
-                    matrix[1] = Math.cos(count) * 3;
-                    unit.cont.filters = [filter];
+                if (AnimationRender.unitAttack(warrior.cont)) { //animation finished
+                    unit.stats.hp -= (warrior.stats.atk.dmg + Utils.getRandomBetween(-2, 2));
+                    warrior.stats.atk.cd = warrior.stats.atk.atkSpeed;
                     return true;
                 }
             } else {
@@ -54,6 +52,11 @@ define(['pixi.min', 'app/utils', 'app/ui/textRender'], function (pixi, Utils, Te
             }
             return false;
         };
+
+        warrior.death = function () {
+            console.log("death");
+            AnimationRender.unitDeath(warrior.cont);
+        }
 
         return warrior;
     };
