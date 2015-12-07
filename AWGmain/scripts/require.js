@@ -3,6 +3,7 @@
  Available via the MIT or new BSD license.
  see: http://github.com/jrburke/requirejs for details
  */
+
 var requirejs, require, define;
 (function (ha) {
     function L(b) {

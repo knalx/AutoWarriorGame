@@ -16,9 +16,9 @@ define(['pixi.min'], function (PIXI) {
         var t = sprite.animations.timer;
 
         if (t <= renderSpeed / 2) {
-            sprite.rotation = sprite.rotation + 0.1;
+            sprite.rotation = sprite.rotation + 0.05;
         } else {
-            sprite.rotation = sprite.rotation - 0.1;
+            sprite.rotation = sprite.rotation - 0.05;
         }
         ;
 

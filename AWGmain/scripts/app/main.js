@@ -1,24 +1,35 @@
-define(['pixi.min', 'app/utils', 'app/task', 'app/heroes/warrior'],
-    function (pixi, Utils, Task, Warrior) {
+define(['pixi.min', 'app/utils', 'app/heroes/warrior', 'app/task'],
+    function (pixi, Utils, Warrior, Task) {
         //periodic timing process
         var makeTick = function (units, tick) {
             var keys = Utils.getKeys(units);
-            keys.forEach(function (key) {
-                var curTask = units[key].tasks[units[key].tasks.length - 1];
-                if (curTask != null && units[key].stats.hp > 0) {
+            keys.forEach(function (unitID) {
+                var curTask = units[unitID].tasks[units[unitID].tasks.length - 1];
+                if (curTask != null && units[unitID].stats.hp > 0) {
+                    //move
                     if (curTask.type == 'move') {
-                        if (goToDesiredPosstition(units[key])) {
-                            units[key].tasks.pop();
+                        if (units[unitID].goToDesiredPosition()) {
+                            units[unitID].tasks.pop();
                         }
                     }
+                    //attack
+                    if (curTask.type == 'attack') {
+                        if (units[unitID].attackUnit(units, curTask.target)) {
+                            units[unitID].tasks.pop();
+                        }
+                    }
+                    //kill
                     if (curTask.type == 'kill') {
-                        if (killUnit(units, key)) {
-                            units[key].tasks.pop();
+                        if (units[curTask.target].isDead()) {
+                            units[unitID].tasks.pop();
+                        } else {
+                            units[unitID].tasks.push(createAttackTask(curTask.target));
                         }
                     }
-                } else if (curTask == null && units[key].stats.hp > 0) {
+
+                } else if (curTask == null && units[unitID].stats.hp > 0) {
                     console.log('op');
-                    units[key].tasks.push(createMoveTask(Utils.getRandom(), Utils.getRandom()));
+                    units[unitID].tasks.push(createMoveTask(Utils.getRandom(), Utils.getRandom()));
                 }
             });
 
@@ -37,47 +48,7 @@ define(['pixi.min', 'app/utils', 'app/task', 'app/heroes/warrior'],
         }
 
 
-//return true when u get the destination
-        function goToDesiredPosstition(unit) {
-            var s = 3; //speed
-            var movetask = unit.tasks[unit.tasks.length - 1];
-            var range = goToPoint(unit, movetask.x, movetask.y, s)
-            return range < s;
-        }
 
-        //return range between unit and destination
-        function goToPoint(unit, toX, toY, r) {
-            var dx = toX - unit.cont.x;
-            var dy = toY - unit.cont.y;
-
-            if (Math.abs(dx) >= r) {
-                unit.cont.x += r * (dx) / Math.sqrt(Math.pow(dy, 2) + Math.pow(dx, 2));
-            }
-            if (Math.abs(dy) >= r) {
-                unit.cont.y += r * (dy) / Math.sqrt(Math.pow(dy, 2) + Math.pow(dx, 2));
-            }
-
-            return Math.sqrt(Math.sqrt(Math.pow(dy, 2) + Math.pow(dx, 2)));
-        }
-
-        //unit with key have last task to kill somebody
-        function killUnit(units, key) {
-            var speed = 3;
-            var unit = units[key];
-            var killTask = unit.tasks[unit.tasks.length - 1];
-            var targetUnit = units[killTask.target];
-            // if target close enough
-            var range = goToPoint(unit, targetUnit.cont.x, targetUnit.cont.y, speed);
-            var animationFinished = false;
-            if (range <= unit.stats.atk.range) {
-                animationFinished = unit.attack(targetUnit);
-                if (targetUnit.stats.hp <= 0 && animationFinished) {
-                    unit.death();
-                    return true;
-                }
-            }
-            return false;
-        }
 
 
         return {

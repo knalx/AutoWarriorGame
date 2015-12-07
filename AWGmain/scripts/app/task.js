@@ -5,11 +5,16 @@ function createMoveTask(toX, toY) {
         y: toY
     }
 
-
 }
 function createKillTask(targetID) {
     return task = {
         type: "kill",
+        target: targetID
+    }
+}
+function createAttackTask(targetID) {
+    return task = {
+        type: "attack",
         target: targetID
     }
 }
