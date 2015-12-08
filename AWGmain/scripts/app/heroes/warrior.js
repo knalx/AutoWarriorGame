@@ -1,24 +1,29 @@
-define(['pixi.min', 'app/utils', 'app/ui/textRender', 'app/ui/animationRender'], function (pixi, Utils, TextRender, AnimationRender) {
+define(['pixi.min', 'app/utils', '../ui/unitRender', 'app/ui/animationRender'], function (pixi, Utils, UnitRender, AnimationRender) {
     var createWarrior = function (n) {
         var Actions = {
             IDLE: 'idle',
             WALK: 'walk',
             ATTACK: 'attack',
             DEAD: 'dead'
-        }
+        };
+
 
         var container = new PIXI.Container();
         container.x = 40 + Utils.getRandom();
         container.y = 40 + Utils.getRandom();
-
         var sprite = PIXI.Sprite.fromImage('resource/art/warrior_stand.png');
         sprite.interactive = true;
-        sprite.scale.x = 0.3;
-        sprite.scale.y = 0.3;
+        sprite.anchor.set(0.5);
+        sprite.scale.x = 1;
+        sprite.scale.y = 1;
+
+
 
         container.addChild(sprite);
         var number = n;// Utils.getRandomBetween(100, 200);
-        container.addChild(TextRender.getNick('w' + number));
+        container.addChildAt(UnitRender.getNick('w' + number), 1);
+        container.addChildAt(UnitRender.getHpBar(1), 2);
+
         container.animations = {
             timer: 0
         };
@@ -49,11 +54,16 @@ define(['pixi.min', 'app/utils', 'app/ui/textRender', 'app/ui/animationRender'],
         //return true if unit die
         warrior.makeDamage = function (dmg) {
             warrior.stats.hp -= dmg;
+            warrior.cont.removeChildAt(2);
+
             if (warrior.stats.hp <= 0) {
+                warrior.stats.hp = 0;
                 warrior.curAction = Actions.DEAD;
                 warrior.death();
+                warrior.cont.addChildAt(UnitRender.getHpBar(warrior.stats.hp / 100), 2);
                 return true;
             }
+            warrior.cont.addChildAt(UnitRender.getHpBar(warrior.stats.hp / 100), 2);
             return false;
         }
 

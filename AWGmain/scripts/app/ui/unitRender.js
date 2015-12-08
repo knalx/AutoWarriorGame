@@ -15,7 +15,20 @@ define(['pixi.min'], function (pixi) {
 
         return richText;
     };
+    //percent of hp on input
+    var getHpBar = function (hp) {
+        var barSize = 70 * hp;
+        var graphics = new PIXI.Graphics();
+
+        graphics.beginFill(0xcc0000);
+        graphics.lineStyle(5, 0xcc0000, 3);
+        graphics.moveTo(-70, -70);
+        graphics.lineTo(-70 + barSize, -70);
+        graphics.endFill();
+        return graphics;
+    };
     return {
-        getNick: getNick
+        getNick: getNick,
+        getHpBar: getHpBar
     };
 });

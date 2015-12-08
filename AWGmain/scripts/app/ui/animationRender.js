@@ -22,11 +22,7 @@ define(['pixi.min'], function (PIXI) {
         }
         ;
 
-        if (t == 0) {
-            return true; //animation finished
-        } else {
-            return false;
-        }
+        return t == 0;
 
     };
 
