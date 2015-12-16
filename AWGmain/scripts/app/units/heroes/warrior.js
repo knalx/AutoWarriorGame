@@ -1,12 +1,6 @@
-define(['pixi.min', 'app/utils', '../ui/unitRender', 'app/ui/animationRender'], function (pixi, Utils, UnitRender, AnimationRender) {
+define(['pixi.min', '../../enums', 'app/utils', 'app/ui/unitRender', 'app/ui/animationRender'],
+    function (pixi, enums, Utils, UnitRender, AnimationRender) {
     var createWarrior = function (n) {
-        var Actions = {
-            IDLE: 'idle',
-            WALK: 'walk',
-            ATTACK: 'attack',
-            DEAD: 'dead'
-        };
-
 
         var container = new PIXI.Container();
         container.x = 40 + Utils.getRandom();
@@ -32,6 +26,7 @@ define(['pixi.min', 'app/utils', '../ui/unitRender', 'app/ui/animationRender'], 
         warrior.curAction = Actions.IDLE;
         warrior.stats = {
             hp: 100,
+            maxHp: 100,
             mp: 100,
             ms: 3,
             atk: {
@@ -144,12 +139,10 @@ define(['pixi.min', 'app/utils', '../ui/unitRender', 'app/ui/animationRender'], 
             return Math.sqrt(Math.sqrt(Math.pow(dy, 2) + Math.pow(dx, 2)));
         }
 
-
+        // warrior.__proto__= Unit;
         return warrior;
     };
 
-
     return {createWarrior: createWarrior}
-
 
 });
